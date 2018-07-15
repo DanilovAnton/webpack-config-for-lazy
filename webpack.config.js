@@ -7,6 +7,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const javascript = require('./webpack_modules/javascript');
 const style = require('./webpack_modules/style');
 
+const isDevMode = mode => mode === 'development';
 const directory = {
     source: path.join(__dirname, 'src'),
     build: path.join(__dirname, 'build'),
@@ -23,15 +24,13 @@ const config = (env, {mode}) => merge([
             publicPath: '/'
         },
 
-        devtool: mode === 'production' ? 'source-map' : 'inline-source-map',
+        devtool: isDevMode(mode) ? 'inline-source-map' : 'source-map',
 
         devServer: {
             host: 'localhost',
             port: 3000,
             overlay: true,
         },
-
-
 
         plugins: [
             new CleanWebpackPlugin('build'),
@@ -43,7 +42,7 @@ const config = (env, {mode}) => merge([
         ],
     },
     javascript(),
-    style()
+    style(isDevMode(mode))
 ]);
 
 module.exports = config;

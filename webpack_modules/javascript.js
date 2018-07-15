@@ -1,4 +1,4 @@
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+// const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = () => ({
     module: {
@@ -10,13 +10,13 @@ module.exports = () => ({
             }
         ]
     },
-    optimization: {
-        minimizer: [
-            new UglifyJsPlugin({
-                cache: true,
-                parallel: true,
-                sourceMap: true // set to true if you want JS source maps
-            })
-        ]
-    }
+    // optimization: {
+    //     minimizer: [
+    //         new UglifyJSPlugin({
+    //             cache: true,
+    //             parallel: true,
+    //             sourceMap: true
+    //         })
+    //     ]
+    // }
 });

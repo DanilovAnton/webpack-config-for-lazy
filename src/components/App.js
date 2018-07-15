@@ -1,12 +1,15 @@
 import React, {Component} from "react";
-import { hot } from "react-hot-loader";
+import {hot} from "react-hot-loader";
 import Input from "./input/Input";
 
 
 class App extends Component {
-    render(){
+    render() {
         return (
-            <Input/>
+            <div>
+                <Input/>
+                <textarea/>
+            </div>
         )
     }
 }
