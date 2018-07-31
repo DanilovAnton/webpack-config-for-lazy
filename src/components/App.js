@@ -1,14 +1,12 @@
 import React, {Component} from "react";
 import {hot} from "react-hot-loader";
-import Input from "./input/Input";
-
+import Calendar from './calendar/calendar';
 
 class App extends Component {
     render() {
         return (
             <div>
-                <Input/>
-                <textarea/>
+                <Calendar/>
             </div>
         )
     }
