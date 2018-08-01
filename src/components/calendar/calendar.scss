@@ -2,16 +2,22 @@
   box-sizing: border-box;
 }
 
-a {
-  text-decoration: none
+button {
+  background: none;
+  border: none;
+  &:focus {
+    outline: none;
+  }
 }
+
 .calendar {
   width: 320px;
 }
+
 .calendar__header {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -20,6 +26,25 @@ a {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+}
+
+.calendar__select {
+  height: 100%;
+  width: 100px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+}
+
+.calendar__month-select, .calendar__year-select {
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  &:hover {
+    color: #33aeff;
+    font-weight: bold;
+  }
 }
 
 .calendar__btn {
@@ -81,4 +106,23 @@ a {
   border: 1px solid #dbdbdb;
   text-align: center;
   height: 46px;
+}
+
+.calendar__tbody-cell {
+  cursor: pointer;
+  &:hover {
+    background-color: darken(#fff, 10%);
+  }
+  &_selected {
+    background-color: #71d1ff;
+    &:hover{
+      background-color: #71d1ff;
+    }
+  }
+}
+
+
+
+.calendar__tbody-cell_current {
+  border: 2px solid #71d1ff;
 }
