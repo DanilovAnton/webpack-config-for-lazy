@@ -3,16 +3,48 @@ import './calendar.scss';
 import moment from 'moment';
 import cn from 'classnames';
 
-const CalendarDay = () => {
+moment.locale('ru');
 
-    const handleClick = () => {
 
+const CalendarBody = props => {
+    const date = props.date.clone();
+    const firstDay = date.clone().startOf('month'); // первый день месяца
+    const dayOfWeek = firstDay.clone().day(); //день недели
+    let i = 0; // счетчик
+    let startDay; // дата отчета
+    const endIndex = 42;
+    let listTD = []; // массив для td
+    let listTR = []; // массив для tr
+
+    const cls = date => {
+        return cn('calendar__tbody-cell', {'calendar__tbody-cell_inactive': props.date.startOf('month').isSame(date.startOf('month'))});
     };
 
+    if (dayOfWeek > 1) {
+        startDay = firstDay.clone().subtract(dayOfWeek - 1, 'd');
+    } else {
+        startDay = firstDay.clone();
+    }
+    const td = number => <td className={cls(date)}>
+        <div className="calendar__tbody-date">{number}</div>
+    </td>;
+    const tr = node => <tr className="calendar__tbody-week ">{node}</tr>;
+
+
+    while (i < endIndex) {
+        listTD = [];
+        for (let j = 0; j < 7; j++) {
+            listTD.push(td(startDay.date()));
+            startDay.add(1, 'd');
+            i++;
+        }
+        listTR.push(tr(listTD));
+    }
+
     return (
-        <td className="calendar__tbody-cell" onClick={handleClick}>
-            <div className="calendar__tbody-date">{day++}</div>
-        </td>
+        <tbody className="calendar__tbody">
+        {listTR}
+        </tbody>
     );
 };
 
@@ -20,187 +52,52 @@ export default class Calendar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            month: moment()
-        }
+            date: moment(),
+            months: moment.months(),
+        };
     }
 
-    handleClick = () => {
-        console.log(moment());
-        console.log(moment() - 1);
-    };
 
+    getMonth = () => this.state.months[this.state.date.month()].toUpperCase();
+
+    getYear = () => this.state.date.year();
 
     renderTableBody = () => {
-        let date = moment();
-        let dayOfWeek = moment().day();
-        let firstDay = moment().startOf('month');
-        console.log(dayOfWeek);
-        window.moment = moment;
-        let weeks = [];
-        let index = 1;
-        let day = 1;
-        let cls = i => classNames('calendar__tbody-cellbar', {'calendar__tbody-cellbar_selected': i === 1});
-        while (index < 42) {
-            let days = [];
-            for (let j = 0; j < 7; j++) {
-                index++;
-                if (firstDay.day() < index) {
-                    days.push(
-                        <td className="calendar__tbody-cell">
-                            <div className="calendar__tbody-date">{day++}</div>
-                        </td>
-                    )
-                } else {
-                    date = date.add(1, 'days');
-                    days.push(
-                        <td className="calendar__tbody-cell">
-                            <div className="calendar__tbody-date">{date.date()}</div>
-                        </td>
-                    )
-                }
-            }
-
-            weeks.push(
-                <tr className="calendar__tbody-week">
-                    {days}
-                </tr>
-            );
-        }
-
-
         return (
-            <tbody className="calendar__tbody">
-            {weeks}
-            </tbody>
+            <CalendarBody date={this.state.date}/>
         )
+    };
 
-        // return (
-        //     <tbody className="calendar__tbody">
-        //     <tr className="calendar__tbody-week">
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">11</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">21</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">31</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">41</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">51</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">61</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">71</div>
-        //         </td>
-        //     </tr>
-        //     <tr className="calendar__tbody-week">
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">11</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">21</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">31</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">41</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">51</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">61</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">71</div>
-        //         </td>
-        //     </tr>
-        //     <tr className="calendar__tbody-week">
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">11</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">21</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">31</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">41</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">51</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">61</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">71</div>
-        //         </td>
-        //     </tr>
-        //     <tr className="calendar__tbody-week">
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">11</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">21</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">31</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">41</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">51</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">61</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">71</div>
-        //         </td>
-        //     </tr>
-        //     <tr className="calendar__tbody-week">
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">11</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">21</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">31</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">41</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell calendar__tbody-cell_current">
-        //             <div className="calendar__tbody-date">51</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell">
-        //             <div className="calendar__tbody-date">61</div>
-        //         </td>
-        //         <td className="calendar__tbody-cell calendar__tbody-cell_selected">
-        //             <div className="calendar__tbody-date">71</div>
-        //         </td>
-        //     </tr>
-        //     </tbody>
-        // )
+    handlePlusMonth = () => {
+        let newDate = this.state.date.clone();
+        newDate.add(1, 'M');
+        this.setState({date: newDate});
+    };
+
+    handleMinusMonth = () => {
+        let newDate = this.state.date.clone();
+        newDate.subtract(1, 'M');
+        this.setState({date: newDate});
+    };
+
+    handlePlusYear = () => {
+        let newDate = this.state.date.clone();
+        newDate.add(1, 'Y');
+        this.setState({date: newDate});
+    };
+
+    handleMinusYear = () => {
+        let newDate = this.state.date.clone();
+        newDate.subtract(1, 'Y');
+        this.setState({date: newDate});
     };
 
     render() {
         return (
-            <div className="calendar">
+            <div className="calendar" style={{width: 320}}>
                 <div className="calendar__header">
                     <div className="calendar__header-container">
-                        <button className="calendar__btn" onClick={this.handleClick}>
+                        <button className="calendar__btn" onClick={this.handleMinusYear}>
                             <div className="calendar__btn-img">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"/>
@@ -208,7 +105,7 @@ export default class Calendar extends Component {
                                 </svg>
                             </div>
                         </button>
-                        <button className="calendar__btn">
+                        <button className="calendar__btn" onClick={this.handleMinusMonth}>
                             <div className="calendar__btn-img">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
@@ -218,11 +115,11 @@ export default class Calendar extends Component {
                         </button>
                     </div>
                     <div className="calendar__select">
-                        <button className="calendar__month-select">Август</button>
-                        <button className="calendar__year-select">2018</button>
+                        <button className="calendar__month-select">{this.getMonth()}</button>
+                        <button className="calendar__year-select">{this.getYear()}</button>
                     </div>
                     <div className="calendar__header-container">
-                        <button className="calendar__btn">
+                        <button className="calendar__btn" onClick={this.handlePlusMonth}>
                             <div className="calendar__btn-img calendar__btn-img_rotate180">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
@@ -230,7 +127,7 @@ export default class Calendar extends Component {
                                 </svg>
                             </div>
                         </button>
-                        <button className="calendar__btn">
+                        <button className="calendar__btn" onClick={this.handlePlusYear}>
                             <div className="calendar__btn-img calendar__btn-img_rotate180">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                     <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"/>

@@ -11,7 +11,7 @@ button {
 }
 
 .calendar {
-  width: 320px;
+  //width: 250px;
 }
 
 .calendar__header {
@@ -30,7 +30,8 @@ button {
 
 .calendar__select {
   height: 100%;
-  width: 100px;
+  width: 100%;
+  padding: 0 5px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -118,6 +119,9 @@ button {
     &:hover{
       background-color: #71d1ff;
     }
+  }
+  &_inactive {
+    color: darken(#fff, 50%)
   }
 }
 
