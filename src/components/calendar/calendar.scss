@@ -38,7 +38,8 @@ button {
 
 }
 
-.calendar__month-select, .calendar__year-select {
+
+.calendar__select-btn {
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
@@ -75,11 +76,25 @@ button {
 }
 
 .calendar__body {
+  position: relative;
   width: 100%;
+  height: 100%;
 }
 
-.calender__table {
+.calendar__month-table {
+  position: absolute;
+  z-index: 4;
+  background-color: #fff;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.calendar__table {
   width: 100%;
+  height: 100%;
+  z-index: 5;
   border-collapse: collapse;
   border-spacing: 0;
 }
@@ -106,12 +121,14 @@ button {
 .calendar__tbody-cell {
   border: 1px solid #dbdbdb;
   text-align: center;
-  height: 46px;
+  //height: 46px;
 }
 
 .calendar__tbody-cell {
   cursor: pointer;
   position: relative;
+  transition: .3s;
+  background-color: #fff;
   &:hover {
     background-color: darken(#fff, 10%);
   }

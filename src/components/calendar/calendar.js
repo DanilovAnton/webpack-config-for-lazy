@@ -148,9 +148,30 @@ export default class Calendar extends Component {
         )
     };
 
+    renderCalendar = () => {
+        return (
+            <table className="calendar__table">
+                {this.renderHead()}
+                {this.renderTableBody()}
+            </table>
+        )
+    };
+
+    renderCalendarMonth = () => {
+        return (
+            <div className="calendar__month-table">
+                <table className="calendar__table">
+                    <tbody className="calendar__tbody">
+                        <tr key={_.uniqueId()} className="calendar__tbody-week ">1</tr>
+                    </tbody>
+                </table>
+            </div>
+        )
+    };
+
     render() {
         return (
-            <div className="calendar" style={{width: 320}}>
+            <div className="calendar" style={{width: 324, height: 294}}>
                 <div className="calendar__header">
                     <div className="calendar__header-container">
                         <button className="calendar__btn" onClick={this.handleMinusYear}>
@@ -171,8 +192,9 @@ export default class Calendar extends Component {
                         </button>
                     </div>
                     <div className="calendar__select">
-                        <button className="calendar__month-select">{this.getMonth()}</button>
-                        <button className="calendar__year-select">{this.getYear()}</button>
+                        <button className="calendar__select-btn"
+                                onClick={() => console.log('sw')}>{this.getMonth()}</button>
+                        <button className="calendar__select-btn">{this.getYear()}</button>
                     </div>
                     <div className="calendar__header-container">
                         <button className="calendar__btn" onClick={this.handlePlusMonth}>
@@ -194,10 +216,8 @@ export default class Calendar extends Component {
                     </div>
                 </div>
                 <div className="calendar__body">
-                    <table className="calender__table">
-                        {this.renderHead()}
-                        {this.renderTableBody()}
-                    </table>
+                    {this.renderCalendarMonth()}
+                    {this.renderCalendar()}
                 </div>
             </div>
         )
