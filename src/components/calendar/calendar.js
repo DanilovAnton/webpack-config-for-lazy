@@ -2,61 +2,98 @@ import React, {Component} from 'react';
 import './calendar.scss';
 import moment from 'moment';
 import cn from 'classnames';
+import _ from 'lodash';
 
 moment.locale('ru');
 
 
-const CalendarBody = props => {
-    const date = props.date.clone();
+const listDays = inputDate => {
+    const date = inputDate.clone();
     const firstDay = date.clone().startOf('month'); // первый день месяца
     const dayOfWeek = firstDay.clone().day(); //день недели
-    let i = 0; // счетчик
     let startDay; // дата отчета
-    const endIndex = 42;
-    let listTD = []; // массив для td
-    let listTR = []; // массив для tr
-
-    const cls = date => {
-        return cn('calendar__tbody-cell', {'calendar__tbody-cell_inactive': props.date.startOf('month').isSame(date.startOf('month'))});
-    };
-
+    let days = [];
     if (dayOfWeek > 1) {
         startDay = firstDay.clone().subtract(dayOfWeek - 1, 'd');
     } else {
         startDay = firstDay.clone();
     }
-    const td = number => <td className={cls(date)}>
-        <div className="calendar__tbody-date">{number}</div>
-    </td>;
-    const tr = node => <tr className="calendar__tbody-week ">{node}</tr>;
-
-
-    while (i < endIndex) {
-        listTD = [];
-        for (let j = 0; j < 7; j++) {
-            listTD.push(td(startDay.date()));
-            startDay.add(1, 'd');
-            i++;
-        }
-        listTR.push(tr(listTD));
+    let i = 0;
+    while (i < 42) {
+        days.push(startDay.clone());
+        startDay.add(1, 'd');
+        i++;
     }
-
-    return (
-        <tbody className="calendar__tbody">
-        {listTR}
-        </tbody>
-    );
+    return days;
 };
+const week = [
+    {id: 1, name: 'Пн'},
+    {id: 2, name: 'Вт'},
+    {id: 3, name: 'Ср'},
+    {id: 4, name: 'Чт'},
+    {id: 5, name: 'Пт'},
+    {id: 6, name: 'Сб'},
+    {id: 7, name: 'Вс'},
+];
+
+const CalendarBody = props => {
+        let listTD = [];
+        let listTR = [];
+
+        const cls = (date) => {
+            let propsDate = props.date.clone().startOf('month');
+            let cloneDate = date.clone().startOf('month');
+            return cn(
+                'calendar__tbody-cell',
+                {'calendar__tbody-cell_inactive': !propsDate.isSame(cloneDate)},
+                {'calendar__tbody-cell_selected': date.isSame(props.selectedDays)}
+            );
+        };
+
+
+        const clsBlock = date => {
+            return cn(
+                'calendar__tbody-date',
+                {'calendar__tbody-date_current': date.isSame(moment().startOf('day'))}
+            )
+        };
+
+
+        const td = date => (
+            <td key={_.uniqueId()} className={cls(date)} onClick={() => props.tdOnClick(date)}>
+                <div className={clsBlock(date)}><span className="calendar__tbody-text">{date.date()}</span></div>
+            </td>
+        );
+
+        const tr = node => <tr key={_.uniqueId()} className="calendar__tbody-week ">{node}</tr>;
+
+        props.days.forEach((date, i) => {
+            listTD.push(td(date));
+            if ((i + 1) % 7 === 0) {
+                listTR.push(tr(listTD));
+                listTD = [];
+            }
+        });
+
+        return (
+            <tbody className="calendar__tbody">
+            {listTR}
+            </tbody>
+        );
+    }
+;
 
 export default class Calendar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            date: moment(),
+            date: moment().startOf('day'),
             months: moment.months(),
+            days: listDays(moment().startOf('day')),
+            selectedDays: {}
         };
+        window.moment = moment;
     }
-
 
     getMonth = () => this.state.months[this.state.date.month()].toUpperCase();
 
@@ -64,32 +101,51 @@ export default class Calendar extends Component {
 
     renderTableBody = () => {
         return (
-            <CalendarBody date={this.state.date}/>
+            <CalendarBody
+                date={this.state.date}
+                tdOnClick={this.handleTdOnClick}
+                days={this.state.days}
+                selectedDays={this.state.selectedDays}
+            />
         )
+    };
+
+    handleTdOnClick = date => {
+        this.setState({selectedDays: date})
     };
 
     handlePlusMonth = () => {
         let newDate = this.state.date.clone();
         newDate.add(1, 'M');
-        this.setState({date: newDate});
+        this.setState({date: newDate, days: listDays(newDate)});
     };
 
     handleMinusMonth = () => {
         let newDate = this.state.date.clone();
         newDate.subtract(1, 'M');
-        this.setState({date: newDate});
+        this.setState({date: newDate, days: listDays(newDate)});
     };
 
     handlePlusYear = () => {
         let newDate = this.state.date.clone();
         newDate.add(1, 'Y');
-        this.setState({date: newDate});
+        this.setState({date: newDate, days: listDays(newDate)});
     };
 
     handleMinusYear = () => {
         let newDate = this.state.date.clone();
         newDate.subtract(1, 'Y');
-        this.setState({date: newDate});
+        this.setState({date: newDate, days: listDays(newDate)});
+    };
+
+    renderHead = () => {
+        return (
+            <thead className="calendar__body-header">
+            <tr>
+                {week.map(el => <th key={el.id} className="calendar__column-title"><span>{el.name}</span></th>)}
+            </tr>
+            </thead>
+        )
     };
 
     render() {
@@ -139,17 +195,7 @@ export default class Calendar extends Component {
                 </div>
                 <div className="calendar__body">
                     <table className="calender__table">
-                        <thead className="calendar__body-header">
-                        <tr>
-                            <th className="calendar__column-title"><span>Mo</span></th>
-                            <th className="calendar__column-title"><span>Tu</span></th>
-                            <th className="calendar__column-title"><span>We</span></th>
-                            <th className="calendar__column-title"><span>Th</span></th>
-                            <th className="calendar__column-title"><span>Fr</span></th>
-                            <th className="calendar__column-title"><span>Sa</span></th>
-                            <th className="calendar__column-title"><span>Su</span></th>
-                        </tr>
-                        </thead>
+                        {this.renderHead()}
                         {this.renderTableBody()}
                     </table>
                 </div>
